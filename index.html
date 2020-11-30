@@ -1,6 +1,43 @@
 <html>
 <head>
-<h1> It Works! </h1>
+Create your own Double Pattern!
 </head>
-<body></body>
+<div style="text-align:center;" id="scenario_text">
+  <h4>
+    Create a Double Pattern for <u>A Personal Device Unlock</u>
+    <br />
+    <img src="/static/unlock.svg" height="25">
+  </h4>
+</div>
+<br/>
+{% include "/templates/unlock.html" %}
+<input type="hidden" id="flow" name="flow" value="entry">
+<script> start() </script>
+
+<form id="resultForm" action="/" method="post">{% csrf_token %}
+  <input type="hidden" id="code0" name="code0">
+  <input type="hidden" id="code1" name="code1">
+  <input type="hidden" id="time" name="time">
+  {% if path == 1 or path == 2 %}
+  <input type="hidden" id="bl_attempts" name="bl_attempts">
+  {% endif %}
+</form>
+
+<!-- Modal -->
+<div class="modal fade" id="blacklistModal" tabindex="-1" role="dialog" aria-labelledby="blacklistModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="padding: 0px;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel" style="text-align:center;"></h5>
+            </div>
+            <div class="modal-footer" id="confirmModal" style="padding: 0px;">
+                <button type="button" class="inter"
+                id="buttonChangeLong" data-dismiss="modal"
+                style="display: block; width:100vw; background-color:
+                #000081; font-size:18px; color: #FFFFFF;"
+                onclick="pat_reset()">Change Double Pattern</button>
+            </div>
+        </div>
+    </div>
+</div>
 </html>
