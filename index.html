@@ -1,7 +1,23 @@
+<link rel="stylesheet" href="{% static 'survey/patternlock.min.css' %}">
+<link rel="stylesheet" href="{% static 'survey/style.css' %}">
+<script src="{% static 'survey/patternlock.min.js' %}"></script>
+
+<!--
+{% if path == 0 %}
+<script src="{% static 'survey/Control.js' %}"></script>
+{% elif path == 1 %}
+<script src="{% static 'survey/BL_First.js' %}"></script>
+{% elif path == 2 %}
+<script src="{% static 'survey/BL_Both.js' %}"></script>
+{% elif path == 3 %}
+<script src="{% static 'survey/Practice.js' %}"></script>
+{% else %}
+<script src="{% static 'survey/Recall.js' %}"></script>
+{% endif %}
+-->
+
 <html>
-<head>
-Create your own Double Pattern!
-</head>
+<head>Create your own Double Pattern!</head>
 <div style="text-align:center;" id="scenario_text">
   <h4>
     Create a Double Pattern for <u>A Personal Device Unlock</u>
@@ -10,9 +26,74 @@ Create your own Double Pattern!
   </h4>
 </div>
 <br/>
-{% include "/templates/unlock.html" %}
-<input type="hidden" id="flow" name="flow" value="entry">
-<script> start() </script>
+
+<div class="text-center" style="margin:auto;max-width:450px">
+  <div class="text-danger" id="warn-text"> Remember this Pattern. You'll need to recall it to unlock your phone.</div>
+  <br/>
+  <div id="codeFeedback" style="display:block;overflow:scroll;height:50px">
+  </div>
+</div>
+<div>
+  <div class="outer">
+    <div class="patternstack">
+      <div class="patt">
+	<div class="patt-patt3" id="pattern3">
+	</div>
+      </div>
+      <div class="patt">
+	<div class="patt-patt2" id="pattern2">
+	</div>
+      </div>
+      <div class="patt">
+	<div class="patt-patt1" id="pattern1">
+	</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    var wid =
+    Math.max(document.documentElement.clientWidth,window.innerWidth ||
+    0);
+    var rad = wid/17;
+    var mar = wid/17;
+
+    var lock1 = new PatternLock("#pattern1",{
+    radius:rad,
+    margin:mar,
+    onDraw:function(pattern){
+    choose_flow();
+    }
+    });
+
+    var lock2 = new PatternLock("#pattern2",{
+    radius:rad,
+    margin:mar,
+    onDraw:function(pattern){
+    choose_flow();
+    }
+    });
+
+    var lock3 = new PatternLock("#pattern3",{
+    radius:rad,
+    margin:mar,
+    });
+
+    document.getElementById("pattern1").addEventListener("touchstart",function(){timer("P0S","");drawing()});
+    document.getElementById("pattern1").addEventListener("touchend",function(){timer("P0E",Array.from(lock1.getPattern()).map(x=>x-1).join(''));release()});
+    document.getElementById("pattern2").addEventListener("touchstart",function(){timer("P1S",Array.from(lock1.getPattern()).map(x=>x-1).join(''));drawing()});
+    document.getElementById("pattern2").addEventListener("touchend",function(){document.getElementById("ButtonInterface").scrollIntoView({behavior: "smooth", block: "end"});timer("P1E",Array.from(lock1.getPattern()).map(x=>x-1).join('')
+    + " " + Array.from(lock2.getPattern()).map(x=>x-1).join(''));release()});
+  </script>
+</div>
+<hr style="height:70vw; visibility:hidden;"></br>
+<div class="text-center" style="margin:auto;max-width:450px">
+  <div id="ButtonInterface">
+    <button type='button' onclick='pat_reset()' class='btn>Reset</button>
+    <button type='button' class='btn nobut'>Continue</button>
+  </div>
+</div>
+
+<!-- <script> start() </script>
 
 <form id="resultForm" action="/" method="post">{% csrf_token %}
   <input type="hidden" id="code0" name="code0">
@@ -22,7 +103,7 @@ Create your own Double Pattern!
   <input type="hidden" id="bl_attempts" name="bl_attempts">
   {% endif %}
 </form>
-
+-->
 <!-- Modal -->
 <div class="modal fade" id="blacklistModal" tabindex="-1" role="dialog" aria-labelledby="blacklistModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
